@@ -21,6 +21,7 @@ def task(*args):
     file_path = args[2]
     image_folder = args[0]
     group_id = args[1]
+    holiday_file_path = args[3]
     today = date.today()
 
     xml_book = openpyxl.load_workbook(file_path)
@@ -52,7 +53,7 @@ def task(*args):
     #     pass
 
     today = (datetime.today()).replace(hour=0,minute=0,second=0,microsecond=0)
-    holiday_file = (openpyxl.load_workbook('/home/user5/abdul/whatsappkit/holiday.xlsx')).active
+    holiday_file = (openpyxl.load_workbook(holiday_file_path)).active
     holiday_list = []
     next_birth_days= []
     for row in holiday_file.iter_rows(1, holiday_file.max_row):
@@ -83,7 +84,7 @@ def task(*args):
             image_path = "{}/{}".format(image_folder,person['image'])
         for day in next_birth_days:
             if birth_day.day == day.day and birth_day.month == day.month and person['status'] != 'done':
-                message = 'advance' + person['caption']
+                message = 'advance ' + person['caption']
         if message:
             try:
                 sendwhats_image(group_id,image_path,message,30,20)
@@ -123,15 +124,15 @@ def schedule_task():
     group_id = data['group id']
     hour = data['time'][:2]
     minute = data['time'][3:5]
-
+    holiday_file_path = data['holidays']
     if data['job'] == 'force start':
         on_time = datetime.now() + timedelta(minutes=2)
         print(on_time.hour,on_time.minute)
-        scheduler.add_job(func=task,args=[folder,group_id,file_path], trigger='date',run_date=datetime(on_time.year, on_time.month, on_time.day, on_time.hour, on_time.minute,on_time.second),id='sudden dob message')
-        return {'data':"success"}
+        scheduler.add_job(func=task,args=[folder,group_id,file_path,holiday_file_path], trigger='date',run_date=datetime(on_time.year, on_time.month, on_time.day, on_time.hour, on_time.minute,on_time.second),id='sudden dob message')
+        return {'status':"force started your schedule today"}
 
     # schedule a job
 
     scheduler.remove_all_jobs()
-    scheduler.add_job(func=task,args=[folder,group_id,file_path], trigger='cron',day_of_week='mon-sun',hour=hour,minute=minute,id='dob message')
+    scheduler.add_job(func=task,args=[folder,group_id,file_path,holiday_file_path], trigger='cron',day_of_week='mon-sun',hour=hour,minute=minute,id='dob message')
     return {'status':'your job was scheduled at {} everyday'.format(data['time'])}

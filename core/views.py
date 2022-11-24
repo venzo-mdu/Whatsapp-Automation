@@ -44,14 +44,12 @@ def task(*args):
         xml_data['row'] = row_position
         persons.append(xml_data)
 
-    print(persons)
-
     max_column = xml_file.max_column
 
-    try:
-        scheduler.remove_job('check')
-    except:
-        pass
+    # try:
+    #     scheduler.remove_job('check')
+    # except:
+    #     pass
 
     today = (datetime.today()).replace(hour=0,minute=0,second=0,microsecond=0)
     holiday_file = (openpyxl.load_workbook('/home/user5/abdul/whatsappkit/holiday.xlsx')).active

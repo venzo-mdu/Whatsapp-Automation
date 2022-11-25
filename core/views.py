@@ -58,8 +58,9 @@ def task(*args):
     next_birth_days= []
     for row in holiday_file.iter_rows(1, holiday_file.max_row):
         if isinstance(row[0].value,str):
-            row[0].value = datetime.strptime(row[0].value,'%d/%m/%Y')
-        if row[0].value:
+            if 'holiday' not in row[0].value:
+                row[0].value = datetime.strptime(row[0].value,'%d/%m/%Y')
+        if isinstance(row[0].value,datetime):
             holiday_list.append(row[0].value)
     
     holiday_list.sort()
@@ -116,23 +117,28 @@ def schedule_task():
         else:
             return {'status':'scheduled job is altready stopped'}
 
-    if 'path' not in data or 'image folder' not in data or 'group id' not in data or 'time' not in data:
+    if 'path' not in data or 'image folder' not in data or 'group id' not in data and 'holidays' not in data:
         return {'status':'check given details'}
+
+
     
     file_path = data['path']
     folder = data['image folder']
     group_id = data['group id']
-    hour = data['time'][:2]
-    minute = data['time'][3:5]
     holiday_file_path = data['holidays']
-    if data['job'] == 'force start':
+
+    if 'job' in data and data['job'] == 'force start':
         on_time = datetime.now() + timedelta(minutes=2)
         print(on_time.hour,on_time.minute)
         scheduler.add_job(func=task,args=[folder,group_id,file_path,holiday_file_path], trigger='date',run_date=datetime(on_time.year, on_time.month, on_time.day, on_time.hour, on_time.minute,on_time.second),id='sudden dob message')
         return {'status':"force started your schedule today"}
 
+    if not 'time' in data:
+        return {'status':'please give time to schedule a job'}
     # schedule a job
 
+    hour = data['time'][:2]
+    minute = data['time'][3:5]
     scheduler.remove_all_jobs()
     scheduler.add_job(func=task,args=[folder,group_id,file_path,holiday_file_path], trigger='cron',day_of_week='mon-sun',hour=hour,minute=minute,id='dob message')
     return {'status':'your job was scheduled at {} everyday'.format(data['time'])}

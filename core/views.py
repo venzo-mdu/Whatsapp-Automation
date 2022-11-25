@@ -9,7 +9,9 @@ from . import scheduler
 import xlwt
 from xlwt import Workbook
 from urllib.request import urlopen,Request
-import pandas
+import pandas as pd
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 
 
@@ -101,9 +103,45 @@ def task(*args):
     # scheduler.add_job(func=task,args=[persons,image_folder,group_id],trigger='interval',hours=1,start_date=start,end_date=end,id='check')
 
 
-# to start scheduler
-@views.route('/schedule',methods=['POST'])
+@views.route('/schedule',methods=['GET'])
 def schedule_task():
+    if not scheduler.state:
+        scheduler.start()
+
+    with open('./file.txt','r') as text_file:
+        text_line = ((text_file.readlines())[0]).split(':')
+        file_path = text_line[len(text_line)-1]
+    scope_app =['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive'] 
+    cred = ServiceAccountCredentials.from_json_keyfile_name('pywhatkit-sheet-f123bfb074c5.json',scope_app) 
+    client = gspread.authorize(cred)
+    file = client.open('pywhatkit')
+    details_sheet = pd.DataFrame(file.get_worksheet(0).get_all_records())
+    s = details_sheet.shape
+    print(s)
+    details = details_sheet.to_dict()
+    # print(details_sheet,d)
+    persons = []
+    # for i in details:
+        # print(details[i])
+        # for j in details[i]:
+        #     print(details[i][j])
+            # persons.insert(int(j),)
+
+    # first_row = list(sheet.rpow)[0]
+    # keys =[]
+    # for key in first_row:
+    #     key = (key.value).lower()
+    #     if 'birth' in key or 'dob' in key:
+    #         keys.append('dob')
+    #     else:
+    #         keys.append(key)
+    # records = sheet_instance.all()
+    # print(records)
+    return {'status':'success'}
+
+# to start scheduler
+@views.route('/schedule1',methods=['POST'])
+def schedule_task1():
     # input data check
     data = request.json
     # start scheduler if not started

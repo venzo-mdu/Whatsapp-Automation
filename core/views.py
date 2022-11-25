@@ -128,7 +128,7 @@ def schedule_task():
     holiday_file_path = data['holidays']
 
     if 'job' in data and data['job'] == 'force start':
-        on_time = datetime.now() + timedelta(minutes=2)
+        on_time = datetime.now() + timedelta(minutes=1)
         print(on_time.hour,on_time.minute)
         scheduler.add_job(func=task,args=[folder,group_id,file_path,holiday_file_path], trigger='date',run_date=datetime(on_time.year, on_time.month, on_time.day, on_time.hour, on_time.minute,on_time.second),id='sudden dob message')
         return {'status':"force started your schedule today"}

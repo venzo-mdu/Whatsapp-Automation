@@ -370,3 +370,27 @@ Group ID: EaEFItUHCXA6qDtGQm8Utu
 Image: /home/user5/abdul/images/birthday-message-2.jpg
 Caption: happpppy birthday user5
 --------------------
+Date: 27/11/2022
+Time: 20:54
+Group ID: EaEFItUHCXA6qDtGQm8Utu
+Image: E:\Programming\profile pics/profile.jpg
+Caption: happpppy birthday user6
+--------------------
+Date: 27/11/2022
+Time: 21:6
+Group ID: EaEFItUHCXA6qDtGQm8Utu
+Image: E:\Programming\profile pics/profile.jpg
+Caption: happpppy birthday user6
+--------------------
+Date: 27/11/2022
+Time: 21:8
+Group ID: EaEFItUHCXA6qDtGQm8Utu
+Image: E:\Programming\profile pics/profile.jpg
+Caption: happpppy birthday user6
+--------------------
+Date: 27/11/2022
+Time: 21:11
+Group ID: EaEFItUHCXA6qDtGQm8Utu
+Image: E:\Programming\profile pics/profile.jpg
+Caption: happpppy birthday user6
+--------------------

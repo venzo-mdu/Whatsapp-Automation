@@ -116,27 +116,54 @@ def schedule_task():
     client = gspread.authorize(cred)
     file = client.open('pywhatkit')
     details_sheet = pd.DataFrame(file.get_worksheet(0).get_all_records())
-    s = details_sheet.shape
-    print(s)
-    details = details_sheet.to_dict()
-    # print(details_sheet,d)
-    persons = []
-    # for i in details:
-        # print(details[i])
-        # for j in details[i]:
-        #     print(details[i][j])
-            # persons.insert(int(j),)
+    holiday_list=(pd.DataFrame(file.get_worksheet(1).get_all_records())).to_dict('list')
+    settings =  (pd.DataFrame(file.get_worksheet(2).get_all_records())).to_dict('list')
+    print(settings)
+    holiday_list = holiday_list['holidays']
+    for i in range(0,len(holiday_list)):
+        holiday_list[i] =  datetime.strptime(holiday_list[i],'%d/%m/%y')
+    persons = details_sheet.to_dict(orient='records')
+    today = (datetime.today()).replace(hour=0,minute=0,second=0,microsecond=0)
+    next_birth_days= []
+    next_day = today + timedelta(days=1)
+    flag = False
+    while not flag:
+        if next_day in holiday_list:
+            next_birth_days.append(next_day)
+            next_day += timedelta(days=1)
+        else:
+            flag= True
+    print(next_birth_days)
 
-    # first_row = list(sheet.rpow)[0]
-    # keys =[]
-    # for key in first_row:
-    #     key = (key.value).lower()
-    #     if 'birth' in key or 'dob' in key:
-    #         keys.append('dob')
-    #     else:
-    #         keys.append(key)
-    # records = sheet_instance.all()
-    # print(records)
+    for person in persons:
+        birth_day = person['date of birth']
+        print(birth_day)
+        message = None
+        if isinstance(birth_day,str):
+            try:
+                birth_day = datetime.strptime(birth_day,'%d/%m/%Y')
+            except:
+                birth_day = datetime.strptime(birth_day,'%d/%m/%y')
+
+        if birth_day.day == today.day and birth_day.month == today.month and person['status'] != 'done':
+            print('hi')
+            message = person['caption']
+            image_path = "{}/{}".format(settings['images folder'][0],person['image'])
+        for day in next_birth_days:
+            if birth_day.day == day.day and birth_day.month == day.month and person['status'] != 'done':
+                message = 'advance ' + person['caption']
+        if message:
+            try:
+                # sendwhats_image(settings['group id'][0],image_path,message,30,20)
+                print('done')
+                person['status'] = 'don'
+            except:
+                pass
+    # df.to_excel(file)
+    # details_sheet.set_dataframes(df)
+    df = pd.DataFrame.from_records(persons)
+    change = file.get_worksheet(0)
+    change.update([df.columns.values.tolist()]+df.values.tolist())
     return {'status':'success'}
 
 # to start scheduler

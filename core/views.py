@@ -78,7 +78,7 @@ def schedule_task():
     if not scheduler.state:
         scheduler.start()
 
-    with open('./file.txt','r') as text_file:
+    with open('./details.txt','r') as text_file:
         text = text_file.readlines()
         file_name = ((text[0].split(':'))[-1]).strip()
         file_name.replace(' ','')
@@ -100,4 +100,3 @@ def schedule_task():
     scheduler.add_job(func=task,args=[client,file_name], trigger='cron',day_of_week=day_of_week,hour=hour,minute=minute,id='dob message')
     # return {'status':'your job was scheduled at {} everyday'.format(data['time'])}
     return {'status':'success'}
-

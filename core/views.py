@@ -79,12 +79,17 @@ def schedule_task():
         scheduler.start()
 
     with open('./file.txt','r') as text_file:
-        text_line = ((text_file.readlines())[0]).split(':')
-        file_name = text_line[len(text_line)-1]
+        text = text_file.readlines()
+        file_name = ((text[0].split(':'))[-1]).strip()
+        file_name.replace(' ','')
+        credential_json = ((text[1].split(':'))[-1]).strip()
+        credential_json.replace(' ','')
+    # print(file_name,'hi')
     scope_app =['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive'] 
-    cred = ServiceAccountCredentials.from_json_keyfile_name('pywhatkit-sheet-f123bfb074c5.json',scope_app) 
+    cred = ServiceAccountCredentials.from_json_keyfile_name(credential_json,scope_app) 
     client = gspread.authorize(cred)
     print(client)
+    print(file_name)
     file = client.open(file_name)
     settings =  (pd.DataFrame(file.get_worksheet(2).get_all_records())).to_dict('list')
     hour = settings['time'][0][:2]

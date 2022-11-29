@@ -1,1 +1,2 @@
-xl file path :pywhatkit
+xl file name : pywhatkit
+credential json file path : /home/user5/abdul/whatsappkit/pywhatkit-sheet-f123bfb074c5.json
